@@ -19,7 +19,7 @@ our @EXPORT = qw(
   get_url
 );
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Carp;
 use Data::Dumper;
@@ -201,7 +201,7 @@ sub get_url {
 
 __END__
 
-=head2 EXPORT
+=head1 EXPORT
 
 Exported by default:
 get_keywords
@@ -222,7 +222,7 @@ Searching the internet regarding 'fmt_url_map' and/or 'get_video_info' might gai
 
 Please report bugs and/or feature requests to
 C<bug-WWW-YouTube-Info-Simple at rt.cpan.org>,
-alternatively my means of the web interface at
+alternatively by means of the web interface at
 L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=WWW-YouTube-Info-Simple>.
 
 =head1 AUTHOR

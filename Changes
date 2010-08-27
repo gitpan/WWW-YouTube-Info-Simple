@@ -3,4 +3,6 @@ Revision history for Perl extension WWW::YouTube::Info::Simple.
 0.01  Mon Aug 23 11:26:42 2010
 	- original version; created by h2xs 1.23 with options
 		-AX WWW::YouTube::Info::Simple
+0.02  Fri Aug 27 13:03:38 2010
+	- spelling and formating of POD
 
