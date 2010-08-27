@@ -1,0 +1,6 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/WWW-YouTube-Info-Simple.t
+lib/WWW/YouTube/Info/Simple.pm
