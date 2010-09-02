@@ -15,7 +15,7 @@ our @ISA = qw(
 our @EXPORT = qw(
 );
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Carp;
 use Data::Dumper;
@@ -52,7 +52,7 @@ WWW::YouTube::Info::Simple - simple interface to WWW::YouTube::Info
   # $info->{author}         # e.g.: foobar
   # $info->{keywords}       # e.g.: Foo%2Cbar%2CFoobar
   # $info->{length_seconds} # e.g.: 60
-  # $info->{fmt_map}        # e.g.: 22%2F1280x720%2F9%2F0%2F115%2C35%2F854x480%2F9%2F0%2F115%2C34%2F640x360%2F9%2F0%2F115%2C5%2F320x240%2F7%2F0%2F0
+  # $info->{fmt_map}        # e.g.: 22%2F1280x720%2F9%2F0%2F115%2C35%2F854x480%2F9%2F0%2F115%2C34%2F640x360%2F9%2 ..
   # $info->{fmt_url_map}    # e.g.: 22%7Chttp%3A%2F%2Fv14.lscache1.c.youtube.com%2Fvideoplayback%3Fip%3D131.0.0.0 ..
   # $info->{fmt_stream_map} # e.g.: 22%7Chttp%3A%2F%2Fv14.lscache1.c.youtube.com%2Fvideoplayback%3Fip%3D131.0.0.0 ..
   
@@ -215,7 +215,7 @@ L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=WWW-YouTube-Info-Simple>.
 
 =head1 AUTHOR
 
-east
+east E<lt>east@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
