@@ -9,4 +9,6 @@ Revision history for Perl extension WWW::YouTube::Info::Simple.
 	- fixed potential collision at export
 0.04  Wed Sep  1 10:52:24 2010
 	- upgrades at prereq
+0.05  Sun Sep  5 00:18:01 2010
+	- fixed encoding at get_keywords
 

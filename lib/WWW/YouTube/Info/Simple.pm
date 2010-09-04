@@ -15,15 +15,10 @@ our @ISA = qw(
 our @EXPORT = qw(
 );
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use Carp;
 use Data::Dumper;
-
-# URLdecode
-# $string =~ s/\%([A-Fa-f0-9]{2})/pack('C', hex($1))/seg;
-# URLencode
-# $string =~ s/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg;
 
 =head1 NAME
 
@@ -108,6 +103,7 @@ sub get_keywords {
   my @keywords_parts = split /%2C/, $keywords;
   foreach my $item ( @keywords_parts ) {
     next unless $item;
+    $item = _url_decode($item);
     push @{$self->{keywords}}, $item;
   }
 
@@ -155,11 +151,8 @@ sub get_title {
   my $title = $self->{info}->{'title'};
   croak "no title found!" unless $title;
 
-  # URLdecode
-  $title =~ s/\%([A-Fa-f0-9]{2})/pack('C', hex($1))/seg;
-
+  $title = _url_decode($title);
   $title =~ s/\+/ /g;
-
   $self->{title} = $title;
 
   return $self->{title};
@@ -185,12 +178,30 @@ sub get_url {
   foreach my $item ( @fmt_url_map_parts ) {
     my ($quality, $url) = split /%7C/, $item;
     next unless $quality and $url;
-    # URLdecode
-    $url =~ s/\%([A-Fa-f0-9]{2})/pack('C', hex($1))/seg;
+    $url = _url_decode($url);
     $self->{url}->{$quality} = $url;
   }
 
   return $self->{url};
+}
+
+
+sub _url_encode {
+  my $string = shift;
+
+  # URLencode
+  $string =~ s/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg;
+
+  return $string;
+}
+
+sub _url_decode {
+  my $string = shift;
+
+  # URLdecode
+  $string =~ s/\%([A-Fa-f0-9]{2})/pack('C', hex($1))/seg;
+
+  return $string;
 }
 
 1;
