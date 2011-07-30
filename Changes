@@ -11,4 +11,7 @@ Revision history for Perl extension WWW::YouTube::Info::Simple.
 	- upgrades at prereq
 0.05  Sun Sep  5 00:18:01 2010
 	- fixed encoding at get_keywords
+0.06  Sat Jul 23 21:50:45 2011
+	- added method get_conn
+	- added tests
 

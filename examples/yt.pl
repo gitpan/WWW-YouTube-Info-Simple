@@ -2,13 +2,13 @@
 
 # CLI example usage of WWW::YouTube::Info::Simple
 # to directly download YouTube videos
-# with means of wget
+# with means of lwp-download
 # by a given URL or VIDEO_ID.
 # e.g.: ./yt.pl http://youtube.com/watch?v=foobar
 # e.g.: ./yt.pl http://www.youtube.com/v/foobar
 # e.g.: ./yt.pl foobar
 
-# change /usr/bin/wget to the appropriate path/bin
+# change /usr/bin/lwp-download to the appropriate path/bin
 # and use it at your own risk.
 
 use strict;
@@ -76,6 +76,7 @@ else {
   die "no content_type found!";
 }
 my $file = $title.$ext;
+print "Filename: $file\n";
 
 # check whether file exists?
 if ( -e $file ) {
@@ -97,12 +98,16 @@ if ( -e $file ) {
     print "Aborting.\n";
     exit(0);
   }
-  print "\n";
 }
 
 # download
 print "Downloading ..\n";
-system('/usr/bin/wget', "-O$file", $url->{$q});
+# remark: remote mtime will be preserved
+my @args;
+push @args, '/usr/bin/lwp-download';
+push @args, $url->{$q};
+push @args, $file;
+system(@args);
 
 exit(0);
 

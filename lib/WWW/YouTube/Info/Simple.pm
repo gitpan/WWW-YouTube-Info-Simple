@@ -15,7 +15,7 @@ our @ISA = qw(
 our @EXPORT = qw(
 );
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use Carp;
 use Data::Dumper;
@@ -72,6 +72,9 @@ WWW::YouTube::Info::Simple - simple interface to WWW::YouTube::Info
   # $url->{22} e.g.: http://v14.lscache1.c.youtube.com/videoplayback?ip=131.0.0.0 ..
   # ..
   
+  # URL decoded RTMPE URL
+  my $conn = $yt->get_conn(); # e.g.: rtmpe://cp59009.edgefcs.net/youtube?auth=daEcaboc8dvawbcbxazdobDcZajcDdgcfae ..
+  
   # Remark:
   # You might want to check $info->{status} before further workout,
   # as some videos have copyright issues indicated, for instance, by
@@ -88,6 +91,7 @@ I guess its pretty much self-explanatory ..
 =head2 get_keywords
 
 Returns undef if status ne 'ok'.
+Croaks if not available.
 
 =cut
 
@@ -113,6 +117,7 @@ sub get_keywords {
 =head2 get_resolution
 
 Returns undef if status ne 'ok'.
+Croaks if not available.
 
 =cut
 
@@ -139,6 +144,7 @@ sub get_resolution {
 =head2 get_title
 
 Returns undef if status ne 'ok'.
+Croaks if not available.
 
 =cut
 
@@ -161,6 +167,22 @@ sub get_title {
 =head2 get_url
 
 Returns undef if status ne 'ok'.
+Croaks if not available.
+
+  use WWW::YouTube::Info::Simple;
+  
+  # id taken from YouTube video URL
+  my $id = 'foobar';
+  
+  my $yt = WWW::YouTube::Info::Simple->new($id);
+  
+  # hash reference holds values quality -> url
+  my $url = $yt->get_url();
+  # $url->{35} e.g.: http://v14.lscache1.c.youtube.com/videoplayback?ip=131.0.0.0 ..
+  # $url->{22} e.g.: http://v14.lscache1.c.youtube.com/videoplayback?ip=131.0.0.0 ..
+  # ..
+
+YouTube videos can be downloaded in given qualities by means of these URLs and the usual suspects (C<wget>, ..).
 
 =cut
 
@@ -183,6 +205,43 @@ sub get_url {
   }
 
   return $self->{url};
+}
+
+=head2 get_conn
+
+Returns undef if status ne 'ok'.
+Croaks if not available.
+
+  use WWW::YouTube::Info::Simple;
+  
+  # id taken from YouTube video URL
+  my $id = 'foobar';
+  
+  my $yt = WWW::YouTube::Info::Simple->new($id);
+  
+  # URL decoded RTMPE URL
+  my $conn = $yt->get_conn(); # e.g.: rtmpe://cp59009.edgefcs.net/youtube?auth=daEcaboc8dvawbcbxazdobDcZajcDdgcfae ..
+
+A YouTube RTMPE stream can be accessed via this URL and downloaded by
+means of the usual suspects (C<rtmpdump>, ..).
+The URL looses its validity after approx. 30 seconds (experimental value).
+Gathering a fresh RTMPE URL regarding the same VIDEO_ID and the
+C<rtmpdump .. --resume> capability might circumvent this inconvenience.
+
+=cut
+
+sub get_conn {
+  my ($self) = @_;
+
+  $self->get_info() unless exists($self->{info});
+  return if ( $self->{info}->{status} ne 'ok' );
+
+  my $conn = $self->{info}->{'conn'};
+  croak "no conn found!" unless $conn;
+
+  $self->{conn} = _url_decode($conn);
+
+  return $self->{conn};
 }
 
 
@@ -210,12 +269,14 @@ __END__
 
 =head1 SEE ALSO
 
-You might want to have a look at the C<./examples> folder within this distribution,
-or at L<WWW::YouTube::Info>.
+You might want to have a look at the C<./examples> folder within this
+distribution, or at L<WWW::YouTube::Info>.
 
 =head1 HINTS
 
-Searching the internet regarding 'fmt_url_map' and/or 'get_video_info' might gain hints/information to improve L<WWW::YouTube::Info> and L<WWW::YouTube::Info::Simple> as well.
+Searching the internet regarding 'fmt_url_map' and/or 'get_video_info'
+might gain hints/information to improve L<WWW::YouTube::Info> and
+L<WWW::YouTube::Info::Simple> as well.
 
 =head1 BUGS
 
@@ -230,7 +291,7 @@ east E<lt>east@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2010 by east
+Copyright (C) 2011 by east
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.0 or,
