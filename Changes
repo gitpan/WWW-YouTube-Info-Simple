@@ -14,4 +14,7 @@ Revision history for Perl extension WWW::YouTube::Info::Simple.
 0.06  Sat Jul 23 21:50:45 2011
 	- added method get_conn
 	- added tests
+0.07  Thu Aug 11 13:57:09 2011
+	- added fallbacks to get_url(), get_resolution()
+		fmt_url_map, fmt_map seem to be lost more and more
 

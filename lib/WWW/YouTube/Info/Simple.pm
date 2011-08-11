@@ -15,7 +15,7 @@ our @ISA = qw(
 our @EXPORT = qw(
 );
 
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 
 use Carp;
 use Data::Dumper;
@@ -129,13 +129,19 @@ sub get_resolution {
 
   # quality and resolution
   my $fmt_map = $self->{info}->{'fmt_map'};
-  croak "no fmt_map found!" unless $fmt_map;
-
-  my @fmt_map_parts = split /%2F9%2F0%2F115%2C/, $fmt_map;
-  foreach my $item ( @fmt_map_parts ) {
-    my ($quality, $resolution) = split /%2F/, $item;
-    next unless $quality and $resolution;
-    $self->{resolution}->{$quality} = $resolution;
+  unless ( $fmt_map ) {
+    # fallback to fmt_list
+    # as fmt_map doesnt't seem to be supported any more
+    croak "no resolutions found!" unless $self->_fmt_list();
+  }
+  else {
+    # process fmt_map
+    my @fmt_map_parts = split /%2F9%2F0%2F115%2C/, $fmt_map;
+    foreach my $item ( @fmt_map_parts ) {
+      my ($quality, $resolution) = split /%2F/, $item;
+      next unless $quality and $resolution;
+      $self->{resolution}->{$quality} = $resolution;
+    }
   }
 
   return $self->{resolution};
@@ -194,14 +200,20 @@ sub get_url {
 
   # quality and URL
   my $fmt_url_map = $self->{info}->{'fmt_url_map'};
-  croak "no fmt_url_map found!" unless $fmt_url_map;
-
-  my @fmt_url_map_parts = split /%2C/, $fmt_url_map;
-  foreach my $item ( @fmt_url_map_parts ) {
-    my ($quality, $url) = split /%7C/, $item;
-    next unless $quality and $url;
-    $url = _url_decode($url);
-    $self->{url}->{$quality} = $url;
+  unless ( $fmt_url_map ) {
+    # fallback to url_encoded_fmt_stream_map
+    # as fmt_url_map doesnt't seem to be supported any more
+    croak "no URLs found!" unless $self->_url_encoded_fmt_stream_map();
+  }
+  else {
+    # process fmt_url_map
+    my @fmt_url_map_parts = split /%2C/, $fmt_url_map;
+    foreach my $item ( @fmt_url_map_parts ) {
+      my ($quality, $url) = split /%7C/, $item;
+      next unless $quality and $url;
+      $url = _url_decode($url);
+      $self->{url}->{$quality} = $url;
+    }
   }
 
   return $self->{url};
@@ -245,6 +257,49 @@ sub get_conn {
 }
 
 
+sub _url_encoded_fmt_stream_map {
+  my ($self) = @_;
+
+  $self->get_info() unless exists($self->{info});
+  return if ( $self->{info}->{status} ne 'ok' );
+
+  # quality and URL
+  my $url_encoded_fmt_stream_map = $self->{info}->{'url_encoded_fmt_stream_map'};
+  return unless $url_encoded_fmt_stream_map;
+
+  my @url_encoded_fmt_stream_map_parts = split /%2C/, $url_encoded_fmt_stream_map;
+  foreach my $item ( @url_encoded_fmt_stream_map_parts ) {
+    my $url = _url_decode($item);
+    $url =~ s/.*url=(.*)&fallback_host=.*/$1/;
+    $url = _url_decode($url);
+    (my $quality = $url) =~ s/.*&itag=(\d+)&.*/$1/;
+    next unless $quality and $url;
+    $self->{url}->{$quality} = $url;
+  }
+
+  return $self->{url};
+}
+
+sub _fmt_list {
+  my ($self) = @_;
+
+  $self->get_info() unless exists($self->{info});
+  return if ( $self->{info}->{status} ne 'ok' );
+
+  # quality and resolution
+  my $fmt_list = $self->{info}->{'fmt_list'};
+  return unless $fmt_list;
+
+  my @fmt_list_parts = split /%2C/, $fmt_list;
+  foreach my $item ( @fmt_list_parts ) {
+    my ($quality, $resolution, @rest) = split /%2F/, $item;
+    next unless $quality and $resolution;
+    $self->{resolution}->{$quality} = $resolution;
+  }
+
+  return $self->{resolution};
+}
+
 sub _url_encode {
   my $string = shift;
 
@@ -274,9 +329,9 @@ distribution, or at L<WWW::YouTube::Info>.
 
 =head1 HINTS
 
-Searching the internet regarding 'fmt_url_map' and/or 'get_video_info'
-might gain hints/information to improve L<WWW::YouTube::Info> and
-L<WWW::YouTube::Info::Simple> as well.
+Searching the internet regarding 'fmt_url_map', 'url_encoded_fmt_stream_map'
+and/or 'get_video_info' might gain hints/information to improve
+L<WWW::YouTube::Info> and L<WWW::YouTube::Info::Simple> as well.
 
 =head1 BUGS
 
