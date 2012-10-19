@@ -1,4 +1,4 @@
-WWW-YouTube-Info-Simple version 0.07
+WWW-YouTube-Info-Simple version 0.08
 ====================================
 
 INSTALLATION
@@ -14,13 +14,13 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-  Carp;
-  Data::Dumper;
+  Carp
+  Data::Dumper
   WWW::YouTube::Info
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2011 by east
+Copyright (C) 2012 by east
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.0 or,

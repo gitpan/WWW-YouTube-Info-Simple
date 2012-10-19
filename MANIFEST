@@ -8,5 +8,6 @@ t/02_new.t
 t/03_get_info.t
 t/04_get_title.t
 t/05_get_url.t
-t/06_get_conn.t
+t/06_get_resolution.t
+t/07_get_conn.t
 lib/WWW/YouTube/Info/Simple.pm

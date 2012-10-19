@@ -15,7 +15,7 @@ our @ISA = qw(
 our @EXPORT = qw(
 );
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 use Carp;
 use Data::Dumper;
@@ -269,12 +269,13 @@ sub _url_encoded_fmt_stream_map {
 
   my @url_encoded_fmt_stream_map_parts = split /%2C/, $url_encoded_fmt_stream_map;
   foreach my $item ( @url_encoded_fmt_stream_map_parts ) {
-    my $url = _url_decode($item);
-    $url =~ s/.*url=(.*)&fallback_host=.*/$1/;
+    $item = _url_decode($item);
+    (my $url = $item) =~ s/.*url=(.*)&fallback_host=.*/$1/;
     $url = _url_decode($url);
     (my $quality = $url) =~ s/.*&itag=(\d+)&.*/$1/;
-    next unless $quality and $url;
-    $self->{url}->{$quality} = $url;
+    (my $signature = $item) =~ s/.*&sig=([\d\w.]+)&.*/$1/;
+    next unless $quality and $url and $signature;
+    $self->{url}->{$quality} = $url.'&signature='.$signature;
   }
 
   return $self->{url};
